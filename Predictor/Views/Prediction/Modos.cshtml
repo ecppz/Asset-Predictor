@@ -1,0 +1,29 @@
+﻿@model ModoViewModel
+@{
+    ViewData["Title"] = "Modos";
+}
+@if (!string.IsNullOrWhiteSpace(ViewBag.message))
+{
+    <div class="alert @ViewBag.messageType alert-dismissible fade show" role="alert">
+        @ViewBag.Message
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+<section class="section-group">
+<form asp-controller="Prediction" asp-action="Modos" method="post">
+    <div class="form-div">
+        <label asp-for="Type" class="form-label">selecciona un modo</label>
+            <select asp-for="Type" class="form-select">
+                <option value="1">media movil simple (SMA Crossover)</option>
+                <option value="2">regresion lineal</option>
+                <option value="3">momentum (ROC)</option>
+            </select>
+    </div>
+    <button type="submit" class="submit">Guardar modo</button>
+</form>
+</section>
+
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/Prediction/prediction_modos.css" asp-append-version="true" />
+}

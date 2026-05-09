@@ -1,0 +1,113 @@
+﻿@model PredictionListViewModel 
+@{
+    ViewData["Title"] = "Predictor index";
+}
+@if (!string.IsNullOrWhiteSpace(ViewBag.message))
+{
+    <div class="alert @ViewBag.messageType alert-dismissible fade show" role="alert">
+        @ViewBag.Message
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+<section class="section-group">
+    <h4>Regitro de valor de activos</h4>
+
+    <h5>ingrese los datos desde el mas reciente hasta el más antiguo </h5>
+    <div class="row">
+
+    <form asp-controller ="Prediction" asp-action="Calcular" method="post">
+                <div class="row">
+                    @for (int i = 0; i < 20; i++)
+                    {
+                        <div class="col-md-6 mb-3">
+                            <label>Fecha @(i + 1)</label>
+                            <input asp-for="Datos[@i].Fecha" type="date" class="form-control"/>
+                            <span asp-validation-for="Datos[@i].Fecha" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label>Valor @(i + 1)</label>
+                            <input asp-for="Datos[@i].Valor" type="number" class="form-control"/>
+                            <span asp-validation-for="Datos[@i].Valor" class="text-danger"></span>
+                        </div>
+                    }
+                 </div>
+             <button type="submit" class="submit" >Calcular predicción</button>
+    </form>
+</div>
+</section>
+
+<section class="section-group"> 
+@if (Model?.SmaCrossover == null || Model.SmaCrossover.Count == 0)
+    {
+    <h5>No hay resultados de sma crossover</h5>
+    }
+else
+{
+    <h5>Resultados SMA:</h5>
+    <ul>
+        @foreach (var item in Model.SmaCrossover)
+        {
+            <li>SMA Corta: @item.SmaCorta</li>
+            <li>SMA Larga: @item.SmaLarga</li>
+            <li>Tendencia: @item.Tendencia</li>
+        }
+    </ul>
+}
+</section>
+
+<section class="section-group">
+@if (Model?.RegresionLineal == null || Model.RegresionLineal.Count == 0)
+{
+    <h5>No hay resultados de Regresion</h5>
+}
+else
+{
+    <h5>Resultados Regresión:</h5>
+    <ul>
+        @foreach (var item in Model.RegresionLineal)
+        {
+            <li>Pendiente: @item.Pendiente</li>
+            <li>Intersección: @item.Interseccion</li>
+            <li>Tendencia: @item.Tendencia</li>
+        }
+    </ul>
+}
+</section>
+
+<section class="section-group">
+@if (Model?.Momentum == null || Model.Momentum.Count == 0)
+{
+    <h5>No hay resultados de Momentum</h5>
+}
+else
+{
+    <h5>Resultados de Momentum:</h5>
+    <table class="custom-table">
+        <thead>
+            <tr>
+                <th>t</th>
+                <th>Precio</th>
+                <th>ROC (%)</th>
+                <th>Tendencia</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Momentum.Count; i++)
+            {
+                var item = Model.Momentum[i];
+                <tr>
+                    <td>@i</td>
+                    <td>@item.Valor</td>
+                    <td>@(double.IsNaN(item.Roc) ? "n/a" : item.Roc.ToString("F2"))</td>
+                    <td>@item.Tendencia</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+</section>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/Prediction/prediction_index.css" asp-append-version="true" />
+}
